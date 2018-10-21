@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using DashSan.MobileAppService.Models;
 using DashSan.MobileAppService.Models.Steam;
+using DashSan.MobileAppService.Models.Steam.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -15,6 +16,8 @@ namespace DashSan.MobileAppService.Controllers
     public class SteamController : Controller
     {
         private readonly ApiKeys _apiKeys;
+        private readonly string steamBaseUrl = "http://api.steampowered.com";
+
 
         public SteamController(IOptions<ApiKeys> apiKeys)
         {
@@ -26,7 +29,7 @@ namespace DashSan.MobileAppService.Controllers
         public IActionResult GetPlayerSummaries(string userid)
         {
             WebClient webClient = new WebClient();
-            string reqUrl = $"http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={_apiKeys.SteamApiKey}&steamids={userid}";
+            string reqUrl = BuildGetPlayerSummariesRequestUrl(SteamEnums.Methods.GetPlayerSummaries, userid);
             GetPlayerSummariesResponse jsonResponse =
               JsonConvert.DeserializeObject<GetPlayerSummariesResponse>(webClient.DownloadString(reqUrl));
             return Ok(jsonResponse);
@@ -37,7 +40,7 @@ namespace DashSan.MobileAppService.Controllers
         public IActionResult GetFriendList(string userid)
         {
             WebClient webClient = new WebClient();
-            string reqUrl = $"http://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key={_apiKeys.SteamApiKey}&steamid={userid}&relationship=friend";
+            string reqUrl = BuildGetFriendRequestUrl(SteamEnums.Methods.GetFriendList, userid);
             GetFriendListResponse jsonResponse =
               JsonConvert.DeserializeObject<GetFriendListResponse>(webClient.DownloadString(reqUrl));
             return Ok(jsonResponse);
@@ -48,11 +51,30 @@ namespace DashSan.MobileAppService.Controllers
         public IActionResult GetPlayerAchievements(string userid, string appid)
         {
             WebClient webClient = new WebClient();
-            string reqUrl = $"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid={appid}&key={_apiKeys.SteamApiKey}&steamid={userid}";
+            string reqUrl = BuildGetPlayerAchievementsForGameRequestUrl(SteamEnums.Methods.GetPlayerAchievements, userid, appid);
             GetPlayerAchievementsResponse jsonResponse =
               JsonConvert.DeserializeObject<GetPlayerAchievementsResponse>(webClient.DownloadString(reqUrl));
             return Ok(jsonResponse);
         }
+
+        #region String builder methods
+
+        private string BuildGetPlayerAchievementsForGameRequestUrl(SteamEnums.Methods methodName, string userid, string appid)
+        {
+            return $"{steamBaseUrl}/ISteamUserStats/{methodName.ToString()}/v0001/?appid={appid}&key={_apiKeys.SteamApiKey}&steamid={userid}";
+        }
+
+        private string BuildGetPlayerSummariesRequestUrl(SteamEnums.Methods methodName, string userid)
+        {
+            return $"{steamBaseUrl}/ISteamUser/{methodName.ToString()}/v0002/?key={_apiKeys.SteamApiKey}&steamids={userid}";
+        }
+
+        private string BuildGetFriendRequestUrl(SteamEnums.Methods methodName, string userid)
+        {
+            return $"{steamBaseUrl}/ISteamUser/{methodName.ToString()}/v0001/?key={_apiKeys.SteamApiKey}&steamid={userid}&relationship=friend";
+        }
+
+        #endregion
 
     }
 }

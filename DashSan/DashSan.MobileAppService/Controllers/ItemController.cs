@@ -2,6 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 
 using DashSan.Models;
+using Microsoft.Extensions.Configuration;
+using DashSan.MobileAppService.Models;
+using DashSan.MobileAppService;
+using Microsoft.Extensions.Options;
 
 namespace DashSan.Controllers
 {
@@ -10,10 +14,12 @@ namespace DashSan.Controllers
     {
 
         private readonly IItemRepository ItemRepository;
+        private readonly ApiKeys _apiKeys;
 
-        public ItemController(IItemRepository itemRepository)
+        public ItemController(IItemRepository itemRepository, IOptions<ApiKeys> apiKeys)
         {
             ItemRepository = itemRepository;
+            _apiKeys = apiKeys.Value;
         }
 
         [HttpGet]

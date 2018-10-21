@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 
 using DashSan.Models;
+using DashSan.MobileAppService.Models;
 
 namespace DashSan.MobileAppService
 {
@@ -31,6 +32,7 @@ namespace DashSan.MobileAppService
         {
             services.AddMvc();
             services.AddSingleton<IItemRepository, ItemRepository>();
+            services.Configure<ApiKeys>(options => Configuration.GetSection("ApiKeys").Bind(options));
 
             services.AddSwaggerGen(c =>
             {

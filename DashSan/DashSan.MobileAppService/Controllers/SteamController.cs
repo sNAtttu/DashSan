@@ -20,6 +20,7 @@ namespace DashSan.MobileAppService.Controllers
         {
             _apiKeys = apiKeys.Value;
         }
+
         [HttpGet("GetPlayerSummaries/{userid}")]
         [ResponseCache(Duration = 60)]
         public IActionResult GetPlayerSummaries(string userid)
@@ -30,6 +31,7 @@ namespace DashSan.MobileAppService.Controllers
               JsonConvert.DeserializeObject<GetPlayerSummariesResponse>(webClient.DownloadString(reqUrl));
             return Ok(jsonResponse);
         }
+
         [HttpGet("GetFriendList/{userid}")]
         [ResponseCache(Duration = 60)]
         public IActionResult GetFriendList(string userid)
@@ -40,5 +42,17 @@ namespace DashSan.MobileAppService.Controllers
               JsonConvert.DeserializeObject<GetFriendListResponse>(webClient.DownloadString(reqUrl));
             return Ok(jsonResponse);
         }
+
+        [HttpGet("GetPlayerAchievements/{userid}/{appid}")]
+        [ResponseCache(Duration = 60)]
+        public IActionResult GetPlayerAchievements(string userid, string appid)
+        {
+            WebClient webClient = new WebClient();
+            string reqUrl = $"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid={appid}&key={_apiKeys.SteamApiKey}&steamid={userid}";
+            GetPlayerAchievementsResponse jsonResponse =
+              JsonConvert.DeserializeObject<GetPlayerAchievementsResponse>(webClient.DownloadString(reqUrl));
+            return Ok(jsonResponse);
+        }
+
     }
 }

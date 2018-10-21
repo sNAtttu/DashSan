@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace DashSan.MobileAppService.Models.Steam
 {
-    [JsonObject]
     public class Player
     {
         public string steamid { get; set; }
@@ -28,7 +27,6 @@ namespace DashSan.MobileAppService.Models.Steam
         public int loccityid { get; set; }
     }
 
-    [JsonObject]
     public class Players
     {
         public List<Player> players;

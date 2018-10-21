@@ -20,10 +20,9 @@ namespace DashSan.MobileAppService.Controllers
         {
             _apiKeys = apiKeys.Value;
         }
-
-        [HttpGet("{userid}")]
+        [HttpGet("GetPlayerSummaries/{userid}")]
         [ResponseCache(Duration = 60)]
-        public IActionResult GetUser(string userid)
+        public IActionResult GetPlayerSummaries(string userid)
         {
             WebClient webClient = new WebClient();
             string reqUrl = $"http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={_apiKeys.SteamApiKey}&steamids={userid}";
@@ -31,6 +30,15 @@ namespace DashSan.MobileAppService.Controllers
               JsonConvert.DeserializeObject<GetPlayerSummariesResponse>(webClient.DownloadString(reqUrl));
             return Ok(jsonResponse);
         }
-
+        [HttpGet("GetFriendList/{userid}")]
+        [ResponseCache(Duration = 60)]
+        public IActionResult GetFriendList(string userid)
+        {
+            WebClient webClient = new WebClient();
+            string reqUrl = $"http://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key={_apiKeys.SteamApiKey}&steamid={userid}&relationship=friend";
+            GetFriendListResponse jsonResponse =
+              JsonConvert.DeserializeObject<GetFriendListResponse>(webClient.DownloadString(reqUrl));
+            return Ok(jsonResponse);
+        }
     }
 }

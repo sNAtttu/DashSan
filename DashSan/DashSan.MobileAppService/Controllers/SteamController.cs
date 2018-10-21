@@ -59,17 +59,17 @@ namespace DashSan.MobileAppService.Controllers
 
         #region String builder methods
 
-        private string BuildGetPlayerAchievementsForGameRequestUrl(SteamEnums.Methods methodName, string userid, string appid)
+        public string BuildGetPlayerAchievementsForGameRequestUrl(SteamEnums.Methods methodName, string userid, string appid)
         {
             return $"{steamBaseUrl}/ISteamUserStats/{methodName.ToString()}/v0001/?appid={appid}&key={_apiKeys.SteamApiKey}&steamid={userid}";
         }
 
-        private string BuildGetPlayerSummariesRequestUrl(SteamEnums.Methods methodName, string userid)
+        public string BuildGetPlayerSummariesRequestUrl(SteamEnums.Methods methodName, string userid)
         {
             return $"{steamBaseUrl}/ISteamUser/{methodName.ToString()}/v0002/?key={_apiKeys.SteamApiKey}&steamids={userid}";
         }
 
-        private string BuildGetFriendRequestUrl(SteamEnums.Methods methodName, string userid)
+        public string BuildGetFriendRequestUrl(SteamEnums.Methods methodName, string userid)
         {
             return $"{steamBaseUrl}/ISteamUser/{methodName.ToString()}/v0001/?key={_apiKeys.SteamApiKey}&steamid={userid}&relationship=friend";
         }

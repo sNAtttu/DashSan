@@ -57,14 +57,25 @@ namespace DashSan.MobileAppService.Controllers
             return Ok(jsonResponse);
         }
 
-        [HttpGet("GetRecentlyPlayedGames/{userid}/")]
+        [HttpGet("GetRecentlyPlayedGames/{userid}")]
         [ResponseCache(Duration = 60)]
-        public IActionResult GetRecentlyPlayedGames(string userid, string appid)
+        public IActionResult GetRecentlyPlayedGames(string userid)
         {
             WebClient webClient = new WebClient();
-            string reqUrl = BuildRecentlyPlayedGamesRequestUrl(SteamEnums.Methods.GetRecentlyPlayedGames, userid);
+            string reqUrl = BuildPlayerServiceRequestUrl(SteamEnums.Methods.GetRecentlyPlayedGames, userid);
             RecentlyPlayedGamesResponse jsonResponse =
               JsonConvert.DeserializeObject<RecentlyPlayedGamesResponse>(webClient.DownloadString(reqUrl));
+            return Ok(jsonResponse);
+        }
+
+        [HttpGet("GetOwnedGames/{userid}")]
+        [ResponseCache(Duration = 60)]
+        public IActionResult GetOwnedGames(string userid)
+        {
+            WebClient webClient = new WebClient();
+            string reqUrl = BuildPlayerServiceRequestUrl(SteamEnums.Methods.GetOwnedGames, userid);
+            GetOwnedGameResponse jsonResponse =
+              JsonConvert.DeserializeObject<GetOwnedGameResponse>(webClient.DownloadString(reqUrl));
             return Ok(jsonResponse);
         }
 
@@ -85,10 +96,11 @@ namespace DashSan.MobileAppService.Controllers
             return $"{steamBaseUrl}/ISteamUser/{methodName.ToString()}/v0001/?key={_apiKeys.SteamApiKey}&steamid={userid}&relationship=friend";
         }
 
-        public string BuildRecentlyPlayedGamesRequestUrl(SteamEnums.Methods methodName, string userid)
+        public string BuildPlayerServiceRequestUrl(SteamEnums.Methods methodName, string userid)
         {
             return $"{steamBaseUrl}IPlayerService/{methodName.ToString()}/v0001/?key={_apiKeys.SteamApiKey}&steamid={userid}&format=json";
         }
+
 
         #endregion
 

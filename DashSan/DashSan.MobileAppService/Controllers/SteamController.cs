@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DashSan.MobileAppService.Models;
 using DashSan.MobileAppService.Models.Steam;
 using DashSan.MobileAppService.Models.Steam.Enums;
+using DashSan.MobileAppService.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -29,7 +30,7 @@ namespace DashSan.MobileAppService.Controllers
         public IActionResult GetPlayerSummaries(string userid)
         {
             WebClient webClient = new WebClient();
-            string reqUrl = BuildGetPlayerSummariesRequestUrl(SteamEnums.Methods.GetPlayerSummaries, userid);
+            string reqUrl = SteamUrlBuilders.BuildGetPlayerSummariesRequestUrl(SteamEnums.Methods.GetPlayerSummaries, userid, _apiKeys.SteamApiKey, steamBaseUrl);
             GetPlayerSummariesResponse jsonResponse =
               JsonConvert.DeserializeObject<GetPlayerSummariesResponse>(webClient.DownloadString(reqUrl));
             return Ok(jsonResponse);
@@ -40,7 +41,7 @@ namespace DashSan.MobileAppService.Controllers
         public IActionResult GetFriendList(string userid)
         {
             WebClient webClient = new WebClient();
-            string reqUrl = BuildGetFriendRequestUrl(SteamEnums.Methods.GetFriendList, userid);
+            string reqUrl = SteamUrlBuilders.BuildGetFriendRequestUrl(SteamEnums.Methods.GetFriendList, userid, _apiKeys.SteamApiKey, steamBaseUrl);
             GetFriendListResponse jsonResponse =
               JsonConvert.DeserializeObject<GetFriendListResponse>(webClient.DownloadString(reqUrl));
             return Ok(jsonResponse);
@@ -51,7 +52,7 @@ namespace DashSan.MobileAppService.Controllers
         public IActionResult GetPlayerAchievements(string userid, string appid)
         {
             WebClient webClient = new WebClient();
-            string reqUrl = BuildGetPlayerAchievementsForGameRequestUrl(SteamEnums.Methods.GetPlayerAchievements, userid, appid);
+            string reqUrl = SteamUrlBuilders.BuildGetPlayerAchievementsForGameRequestUrl(SteamEnums.Methods.GetPlayerAchievements, userid, appid, _apiKeys.SteamApiKey, steamBaseUrl);
             GetPlayerAchievementsResponse jsonResponse =
               JsonConvert.DeserializeObject<GetPlayerAchievementsResponse>(webClient.DownloadString(reqUrl));
             return Ok(jsonResponse);
@@ -62,7 +63,7 @@ namespace DashSan.MobileAppService.Controllers
         public IActionResult GetRecentlyPlayedGames(string userid)
         {
             WebClient webClient = new WebClient();
-            string reqUrl = BuildPlayerServiceRequestUrl(SteamEnums.Methods.GetRecentlyPlayedGames, userid);
+            string reqUrl = SteamUrlBuilders.BuildPlayerServiceRequestUrl(SteamEnums.Methods.GetRecentlyPlayedGames, userid, _apiKeys.SteamApiKey, steamBaseUrl);
             RecentlyPlayedGamesResponse jsonResponse =
               JsonConvert.DeserializeObject<RecentlyPlayedGamesResponse>(webClient.DownloadString(reqUrl));
             return Ok(jsonResponse);
@@ -73,36 +74,11 @@ namespace DashSan.MobileAppService.Controllers
         public IActionResult GetOwnedGames(string userid)
         {
             WebClient webClient = new WebClient();
-            string reqUrl = BuildPlayerServiceRequestUrl(SteamEnums.Methods.GetOwnedGames, userid);
+            string reqUrl = SteamUrlBuilders.BuildPlayerServiceRequestUrl(SteamEnums.Methods.GetOwnedGames, userid, _apiKeys.SteamApiKey, steamBaseUrl);
             GetOwnedGameResponse jsonResponse =
               JsonConvert.DeserializeObject<GetOwnedGameResponse>(webClient.DownloadString(reqUrl));
             return Ok(jsonResponse);
         }
-
-        #region String builder methods
-
-        public string BuildGetPlayerAchievementsForGameRequestUrl(SteamEnums.Methods methodName, string userid, string appid)
-        {
-            return $"{steamBaseUrl}/ISteamUserStats/{methodName.ToString()}/v0001/?appid={appid}&key={_apiKeys.SteamApiKey}&steamid={userid}";
-        }
-
-        public string BuildGetPlayerSummariesRequestUrl(SteamEnums.Methods methodName, string userid)
-        {
-            return $"{steamBaseUrl}/ISteamUser/{methodName.ToString()}/v0002/?key={_apiKeys.SteamApiKey}&steamids={userid}";
-        }
-
-        public string BuildGetFriendRequestUrl(SteamEnums.Methods methodName, string userid)
-        {
-            return $"{steamBaseUrl}/ISteamUser/{methodName.ToString()}/v0001/?key={_apiKeys.SteamApiKey}&steamid={userid}&relationship=friend";
-        }
-
-        public string BuildPlayerServiceRequestUrl(SteamEnums.Methods methodName, string userid)
-        {
-            return $"{steamBaseUrl}IPlayerService/{methodName.ToString()}/v0001/?key={_apiKeys.SteamApiKey}&steamid={userid}&format=json";
-        }
-
-
-        #endregion
 
     }
 }

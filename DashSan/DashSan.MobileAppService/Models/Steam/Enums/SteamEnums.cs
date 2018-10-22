@@ -9,7 +9,7 @@ namespace DashSan.MobileAppService.Models.Steam.Enums
     {
         public enum Methods
         {
-            GetPlayerSummaries, GetFriendList, GetPlayerAchievements
+            GetPlayerSummaries, GetFriendList, GetPlayerAchievements, GetRecentlyPlayedGames
         }
     }
 }

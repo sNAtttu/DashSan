@@ -57,6 +57,17 @@ namespace DashSan.MobileAppService.Controllers
             return Ok(jsonResponse);
         }
 
+        [HttpGet("GetRecentlyPlayedGames/{userid}/")]
+        [ResponseCache(Duration = 60)]
+        public IActionResult GetRecentlyPlayedGames(string userid, string appid)
+        {
+            WebClient webClient = new WebClient();
+            string reqUrl = BuildRecentlyPlayedGamesRequestUrl(SteamEnums.Methods.GetRecentlyPlayedGames, userid);
+            RecentlyPlayedGamesResponse jsonResponse =
+              JsonConvert.DeserializeObject<RecentlyPlayedGamesResponse>(webClient.DownloadString(reqUrl));
+            return Ok(jsonResponse);
+        }
+
         #region String builder methods
 
         public string BuildGetPlayerAchievementsForGameRequestUrl(SteamEnums.Methods methodName, string userid, string appid)
@@ -72,6 +83,11 @@ namespace DashSan.MobileAppService.Controllers
         public string BuildGetFriendRequestUrl(SteamEnums.Methods methodName, string userid)
         {
             return $"{steamBaseUrl}/ISteamUser/{methodName.ToString()}/v0001/?key={_apiKeys.SteamApiKey}&steamid={userid}&relationship=friend";
+        }
+
+        public string BuildRecentlyPlayedGamesRequestUrl(SteamEnums.Methods methodName, string userid)
+        {
+            return $"{steamBaseUrl}IPlayerService/{methodName.ToString()}/v0001/?key={_apiKeys.SteamApiKey}&steamid={userid}&format=json";
         }
 
         #endregion

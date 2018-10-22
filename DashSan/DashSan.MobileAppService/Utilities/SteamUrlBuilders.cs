@@ -25,7 +25,7 @@ namespace DashSan.MobileAppService.Utilities
 
         public static string BuildPlayerServiceRequestUrl(SteamEnums.Methods methodName, string userid, string apikey, string steamBaseUrl)
         {
-            return $"{steamBaseUrl}IPlayerService/{methodName.ToString()}/v0001/?key={apikey}&steamid={userid}&format=json";
+            return $"{steamBaseUrl}/IPlayerService/{methodName.ToString()}/v0001/?key={apikey}&steamid={userid}&format=json";
         }
     }
 }

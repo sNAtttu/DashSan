@@ -57,9 +57,9 @@ namespace DashSan.MobileAppService.Controllers
             return Ok(jsonResponse);
         }
 
-        [HttpGet("GetRecentlyPlayedGames/{userid}/")]
+        [HttpGet("GetRecentlyPlayedGames/{userid}")]
         [ResponseCache(Duration = 60)]
-        public IActionResult GetRecentlyPlayedGames(string userid, string appid)
+        public IActionResult GetRecentlyPlayedGames(string userid)
         {
             WebClient webClient = new WebClient();
             string reqUrl = BuildPlayerServiceRequestUrl(SteamEnums.Methods.GetRecentlyPlayedGames, userid);
@@ -68,9 +68,9 @@ namespace DashSan.MobileAppService.Controllers
             return Ok(jsonResponse);
         }
 
-        [HttpGet("GetOwnedGames/{userid}/")]
+        [HttpGet("GetOwnedGames/{userid}")]
         [ResponseCache(Duration = 60)]
-        public IActionResult GetOwnedGames(string userid, string appid)
+        public IActionResult GetOwnedGames(string userid)
         {
             WebClient webClient = new WebClient();
             string reqUrl = BuildPlayerServiceRequestUrl(SteamEnums.Methods.GetOwnedGames, userid);

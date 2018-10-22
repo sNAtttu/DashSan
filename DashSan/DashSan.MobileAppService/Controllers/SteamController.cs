@@ -8,6 +8,7 @@ using DashSan.MobileAppService.Models.Steam;
 using DashSan.MobileAppService.Models.Steam.Enums;
 using DashSan.MobileAppService.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -16,13 +17,15 @@ namespace DashSan.MobileAppService.Controllers
     [Route("api/steam")]
     public class SteamController : Controller
     {
+        private readonly ILogger _logger;
         private readonly ApiKeys _apiKeys;
         private readonly string steamBaseUrl = "http://api.steampowered.com";
 
 
-        public SteamController(IOptions<ApiKeys> apiKeys)
+        public SteamController(IOptions<ApiKeys> apiKeys, ILogger<SteamController> logger)
         {
             _apiKeys = apiKeys.Value;
+            _logger = logger;
         }
 
         [HttpGet("GetPlayerSummaries/{userid}")]
@@ -64,9 +67,11 @@ namespace DashSan.MobileAppService.Controllers
         {
             WebClient webClient = new WebClient();
             string reqUrl = SteamUrlBuilders.BuildPlayerServiceRequestUrl(SteamEnums.Methods.GetRecentlyPlayedGames, userid, _apiKeys.SteamApiKey, steamBaseUrl);
-            RecentlyPlayedGamesResponse jsonResponse =
-              JsonConvert.DeserializeObject<RecentlyPlayedGamesResponse>(webClient.DownloadString(reqUrl));
-            return Ok(jsonResponse);
+            _logger.LogInformation($"Sending request to {reqUrl}");
+            string jsonResponse = webClient.DownloadString(reqUrl);
+            _logger.LogInformation($"Response got: {jsonResponse}");
+            RecentlyPlayedGamesResponse recentlyPlayedGames = JsonConvert.DeserializeObject<RecentlyPlayedGamesResponse>(jsonResponse);
+            return Ok(recentlyPlayedGames);
         }
 
         [HttpGet("GetOwnedGames/{userid}")]
@@ -75,9 +80,11 @@ namespace DashSan.MobileAppService.Controllers
         {
             WebClient webClient = new WebClient();
             string reqUrl = SteamUrlBuilders.BuildPlayerServiceRequestUrl(SteamEnums.Methods.GetOwnedGames, userid, _apiKeys.SteamApiKey, steamBaseUrl);
-            GetOwnedGameResponse jsonResponse =
-              JsonConvert.DeserializeObject<GetOwnedGameResponse>(webClient.DownloadString(reqUrl));
-            return Ok(jsonResponse);
+            _logger.LogInformation($"Sending request to {reqUrl}");
+            string jsonResponse = webClient.DownloadString(reqUrl);
+            _logger.LogInformation($"Response got: {jsonResponse}");
+            GetOwnedGameResponse ownedGames = JsonConvert.DeserializeObject<GetOwnedGameResponse>(jsonResponse);
+            return Ok(ownedGames);
         }
 
     }
